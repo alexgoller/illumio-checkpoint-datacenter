@@ -48,6 +48,11 @@ for l in pce.labels.get():
 
 workloads = pce.workloads.get()
 
+count_wl = len(workloads)
+
+print("Retrieved {} workloads".format(count_wl))
+
+
 for workload in workloads:
     uuid = os.path.basename(workload.href)
 
@@ -59,8 +64,11 @@ for workload in workloads:
         value = label['value'].replace(" ", "_")
         labels_as_string = labels_as_string + "|{}={}".format(key, value)
 
+    ### initialize the workload dict
     wldict = {}
-    wldict['name'] = "{}-{}".format(workload.hostname, labels_as_string) 
+    name = workload.hostname if workload.hostname is not None else workload.name
+
+    wldict['name'] = "{} {}".format(name, labels_as_string) 
     wldict['id'] = uuid
     wldict['description'] = 'Illumio export'
     wldict['ranges'] = []
@@ -74,5 +82,6 @@ for workload in workloads:
 if args.output:
     with open(args.output, 'w') as outfile:
         json.dump(checkpoint, outfile, indent=4)
+        print("Wrote output file: {}".format(args.output))
 else:
     print(json.dumps(checkpoint, indent=4))
