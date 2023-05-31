@@ -26,10 +26,10 @@ pip3 install -r requirements.txt
 You can run the script using the following command:
 
 ```
-python illumio-checkpoint-datacenter.py --pce_host <host> --pce_port <port> --pce_org <org> --pce_api_user <api_user> --pce_api_secret <api_secret> --labels <label1,label2,label3> --limit <limit> --output <output_file>
+python illumio-checkpoint-datacenter.py --pce_host <host> --pce_port <port> --pce_org <org> --pce_api_user <api_user> --pce_api_secret <api_secret> --labels <label1,label2,label3> --filter <key1=value,key2=value,key3=value> --limit <limit> --output <output_file>
 ```
 
-Replace `<host>`, `<port>`, `<org>`, `<api_user>`, `<api_secret>`, `<label1,label2,label3>`, `<limit>` and `<output_file>` with the appropriate values.
+Replace `<host>`, `<port>`, `<org>`, `<api_user>`, `<api_secret>`, `<label1,label2,label3>`,  `<key1=value,key2=value,key3=value>`, `<limit>` and `<output_file>` with the appropriate values.
 
 ## Arguments
 
@@ -39,6 +39,7 @@ Replace `<host>`, `<port>`, `<org>`, `<api_user>`, `<api_secret>`, `<label1,labe
 - `--pce_api_user` (required): The API user for the PCE.
 - `--pce_api_secret` (required): The API secret for the PCE.
 - `--labels`: A comma-separated list of labels to retrieve. Default is `role`, `app`, `env`, `loc`. There should be no spaces in between the labels.
+- `--filter`: A comma-separated list of label keys and values to retrieve (e.g. app=Packaging,env=Prod).
 - `--limit`: The maximum number of workloads to retrieve. Default is `500`.
 - `--output`: The output file to write the JSON data to. Default is `illumio-checkpoint.json`.
 
