@@ -40,18 +40,18 @@ checkpoint = {
     "objects": []
 }
 
+# two dicts for caching the label hrefs
 label_href_map = {}
+value_href_map = {}
 
 # fill label dict, this reads all labels and puts the object into a value of a dict. The dict key is the label name.
 for l in pce.labels.get():
     label_href_map[l.href] = { "key": l.key, "value": l.value }
+    value_href_map["{}-{}".format(l.key, l.value)] = l.href
 
 workloads = pce.workloads.get()
-
 count_wl = len(workloads)
-
 print("Retrieved {} workloads".format(count_wl))
-
 
 for workload in workloads:
     uuid = os.path.basename(workload.href)
