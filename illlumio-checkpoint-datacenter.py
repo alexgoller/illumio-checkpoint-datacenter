@@ -15,6 +15,7 @@ parser.add_argument('--pce_org', help='PCE Org', default=1)
 parser.add_argument('--pce_api_user', required=True, help='PCE API User')
 parser.add_argument('--pce_api_secret', required=True, help='PCE API Secret')
 parser.add_argument('--labels', type=lambda s: [item for item in s.split(',')], help='Comma-separated list of labels to retrieve', default=['role', 'app', 'env', 'loc'])
+parser.add_argument('--filter', help='Filter for workloads to retrieve filtered by label')
 parser.add_argument('--limit', type=int, default=500, help='Count limit of workloads to retrieve (default: 500)')
 parser.add_argument('--output', help='Output file', default='illumio-checkpoint.json')
 
@@ -47,9 +48,29 @@ value_href_map = {}
 # fill label dict, this reads all labels and puts the object into a value of a dict. The dict key is the label name.
 for l in pce.labels.get():
     label_href_map[l.href] = { "key": l.key, "value": l.value }
-    value_href_map["{}-{}".format(l.key, l.value)] = l.href
+    value_href_map["{}={}".format(l.key, l.value)] = l.href
 
-workloads = pce.workloads.get()
+filter_labels = []
+
+if args.filter is not None:
+    filters = args.filter.split(',')
+
+    for f in filters:
+        key, value = f.split('=')
+        print("Filtering for key {} with value {}".format(key, value))
+
+        if key not in args.labels:
+            print("Filter key {} is not in the list of labels to retrieve. Please add it to the list of labels to retrieve.".format(key))
+            exit()
+        if "{}={}".format(key, value) not in value_href_map:
+            print("Filter key {} with value {} does not exist in the PCE. Please check the filter.".format(key, value))
+            exit()
+        else:
+            filter_labels.append(value_href_map["{}={}".format(key, value)])
+
+print(filter_labels)
+
+workloads = pce.workloads.get(params={'labels': '[' + json.dumps(filter_labels) + ']'})
 count_wl = len(workloads)
 print("Retrieved {} workloads".format(count_wl))
 
@@ -60,9 +81,10 @@ for workload in workloads:
     
     for l in workload.labels:
         label = label_href_map[l.href]
-        key = label['key'].replace(" ", "_")
-        value = label['value'].replace(" ", "_")
-        labels_as_string = labels_as_string + "|{}={}".format(key, value)
+        if l.key in args.labels:
+            key = label['key'].replace(" ", "_")
+            value = label['value'].replace(" ", "_")
+            labels_as_string = labels_as_string + "|{}={}".format(key, value)
 
     ### initialize the workload dict
     wldict = {}
