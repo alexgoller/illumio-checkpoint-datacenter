@@ -13,6 +13,14 @@ This script is used to connect to an Illumio Policy Compute Engine (PCE), retrie
 - Python 3
 - `illumio` Python library
 
+## Installation
+
+No installation is required, just be sure to add the requirements before:
+
+```
+pip3 install -r requirements.txt
+```
+
 ## Usage
 
 You can run the script using the following command:
